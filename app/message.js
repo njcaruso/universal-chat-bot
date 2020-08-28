@@ -9,8 +9,12 @@ const FILE_NAME = __filename + ": ";
 
 const request = require('request');
 
-function createAndSend(payload, msg) {
-    sendMessage(createMessage(payload, msg));
+function createAndSend(endpoint, payload, msg, context) {
+    if (endpoint == 'slack') {
+        sendMessage(createMessage(payload, msg));
+    } else if (endpoint == 'teams') {
+        context.sendActivity(msg);
+    }
 }
 
 function createMessage(payload, msg) {

@@ -14,6 +14,7 @@ app.use(express.json());
 
 const path = require('path');
 
+const translate = require('./lib/translate.lib');
 const routes = require('./routes/customers.route');
 
 const ENV_FILE = path.join(__dirname, '.env');
@@ -58,9 +59,11 @@ class Webserver {
         console.log(FILE_NAME + 'Starting listening on webserver');
         this.dbo = dbo;
 
-        this.initSlack();
+        const customerCollection = this.dbo.collection('customers');
 
-        this.initTeams();
+        this.initSlack(customerCollection);
+
+        this.initTeams(customerCollection);
 
         app.listen(PORT, () => {
             console.log(FILE_NAME + 'Listening on http://localhost:' + PORT);
@@ -68,8 +71,8 @@ class Webserver {
         });
     }
 
-    initSlack() {
-        const $this = this;
+    initSlack(collection) {
+        //const $this = this;
         app.post('/slack/events', async (req, res) => {
 
             // Take care of Events API verification only when trying to verify
@@ -77,32 +80,45 @@ class Webserver {
                 res.status(200).json({ challenge: req.body.challenge });
             }
 
-            let payload = req.body;
+            let payload;
+
+            translate.translate('slack', req.body, (err, resp) => {
+                if (err) { console.log("err = ", err); }
+                
+                payload = resp;
+            });
 
             // First check if this message is coming from someone other than the bot
-            if (!payload.event.bot_profile) {
+            if (payload.fromUser) {
 
                 // Then check if the message is an IM and in the format of message
-                if (payload.event.channel_type == 'im' && payload.event.type == 'message') {
-                    const customerCollection = $this.dbo.collection('customers');
+                if (payload.channelType == 'im' && payload.type == 'message') {
+                    //const customerCollection = $this.dbo.collection('customers');
 
                     // TODO: CHANGE TO ACCEPT A VARIABLE OF WHERE ITS COMING FROM (SLACK OR TEAMS)
-                    await routes.orderPizza(payload, 'slack', customerCollection, res);
+                    await routes.orderPizza(payload, 'slack', collection, res);
                 }
             }
         });
     }
 
-    initTeams() {
+    initTeams(collection) {
         app.post('/api/messages', async (req, res) => {
             console.log(FILE_NAME + 'POST request from /api/messages');
 
-            res.status(200).send("Hello world from teams");
+            let payload;
+
+            translate.translate('teams', req.body, (err, resp) => {
+                if (err) { console.log("err = ", err); }
+                payload = resp;
+            });
 
             adapter.processActivity(req, res, async (context) => {
                 console.log(FILE_NAME + 'Processing activity from teams');
 
-                await context.sendActivity("Hello world");
+                await routes.orderPizza(payload, 'teams', collection, res, context);
+
+                //await context.sendActivity("Hello world");
             });
         });
     }
