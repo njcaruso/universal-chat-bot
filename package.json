@@ -1,0 +1,27 @@
+{
+  "name": "universal-chat-bot",
+  "version": "1.0.0",
+  "description": "Universal Chat Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nster98/universal-chat-bot.git"
+  },
+  "author": "Nathaniel Glikman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nster98/universal-chat-bot/issues"
+  },
+  "homepage": "https://github.com/nster98/universal-chat-bot#readme",
+  "dependencies": {
+    "botbuilder": "^4.10.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.0",
+    "path": "^0.12.7",
+    "request": "^2.88.2"
+  }
+}
