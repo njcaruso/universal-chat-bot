@@ -16,6 +16,7 @@ const path = require('path');
 
 const translate = require('./lib/translate.lib');
 const routes = require('./routes/customers.route');
+const testRoute = require('./routes/order.route');
 
 const ENV_FILE = path.join(__dirname, '.env');
 require('dotenv').config({ path: ENV_FILE });
@@ -61,9 +62,11 @@ class Webserver {
 
         const customerCollection = this.dbo.collection('customers');
 
-        this.initSlack(customerCollection);
+        this.initTest(customerCollection);
 
-        this.initTeams(customerCollection);
+        //this.initSlack(customerCollection);
+
+        //this.initTeams(customerCollection);
 
         app.listen(PORT, () => {
             console.log(FILE_NAME + 'Listening on http://localhost:' + PORT);
@@ -119,6 +122,20 @@ class Webserver {
                 await routes.orderPizza(payload, 'teams', collection, res, context);
 
                 //await context.sendActivity("Hello world");
+            });
+        });
+    }
+
+    initTest(collection) {
+        app.post('/api/messages', async (req, res) => {
+            let payload;
+            translate.translate('teams', req.body, (err, resp) => {
+                if (err) { console.log("err = ", err); }
+                payload = resp;
+            });
+
+            adapter.processActivity(req, res, async (context) => {
+                await testRoute.orderPizza(payload, 'teams', collection, res, context);
             });
         });
     }

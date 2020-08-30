@@ -7,7 +7,7 @@ const message = require('../message');
 
 const Steps = {
     INIT_STEP: 'initStep',
-    TYPE_STEP: 'typeStep',
+    SIZE_STEP: 'sizeStep',
     TOPPINGS_STEP: 'toppingsStep',
     CONFIRM_TOPPINGS_STEP: 'confirmToppingsStep',
     ADDRESS_STEP: 'addressStep',
@@ -28,9 +28,9 @@ async function orderPizza(payload, endpoint, customerCollection, response, conte
 
     //console.log("currStep before anything else: ", customer[0].currStep);
 
-    if (customer[0].currStep == Steps.TYPE_STEP) {
-        if (!customer[0].typePizza) {
-            await customerCollection.updateOne({ userId: payload.user }, { $set: { typePizza: payload.text } }); // NJC - use either await or callback to wait until complete
+    if (customer[0].currStep == Steps.SIZE_STEP) {
+        if (!customer[0].sizePizza) {
+            await customerCollection.updateOne({ userId: payload.user }, { $set: { sizePizza: payload.text } }); // NJC - use either await or callback to wait until complete
         }
     }
     if (customer[0].currStep == Steps.TOPPINGS_STEP) {
@@ -58,9 +58,9 @@ async function orderPizza(payload, endpoint, customerCollection, response, conte
         var args = payload.text.split(" ");
 
         args.forEach(async function (arg) {
-            if (arg.includes("type:")) {
-                var tempType = arg.replace('type:', '');
-                await customerCollection.updateOne({ userId: payload.user }, { $set: { typePizza: tempType } }); // NJC - use either await or callback to wait until complete
+            if (arg.includes("size:")) {
+                var tempSize = arg.replace('size:', '');
+                await customerCollection.updateOne({ userId: payload.user }, { $set: { sizePizza: tempSize } }); // NJC - use either await or callback to wait until complete
             }
             else if (arg.includes("topping:")) {
                 var tempTopping = arg.replace('topping:', '');
@@ -71,15 +71,15 @@ async function orderPizza(payload, endpoint, customerCollection, response, conte
                 await customerCollection.updateOne({ userId: payload.user }, { $set: { address: tempAddress } }); // NJC - use either await or callback to wait until complete
             }
         });
-        await customerCollection.updateOne({ userId: payload.user }, { $set: { currStep: Steps.TYPE_STEP } }); // NJC - use either await or callback to wait until complete
+        await customerCollection.updateOne({ userId: payload.user }, { $set: { currStep: Steps.SIZE_STEP } }); // NJC - use either await or callback to wait until complete
     }
 
     customer = await customerCollection.find({ userId: payload.user }).toArray(); // NJC - use either await or callback to wait until complete
 
-    if (customer[0].currStep == Steps.TYPE_STEP) {
-        if (!customer[0].typePizza) {
+    if (customer[0].currStep == Steps.SIZE_STEP) {
+        if (!customer[0].sizePizza) {
             msg = message.createAndSend(endpoint, payload,
-                "You didn't tell me what type of pizza you would like. What type of pizza would you like?", context);
+                "You didn't tell me what size pizza you would like. What size pizza would you like?", context);
             response.sendStatus(200);
         } else {
             await customerCollection.updateOne({ userId: payload.user }, { $set: { currStep: Steps.TOPPINGS_STEP } });
@@ -122,10 +122,10 @@ async function orderPizza(payload, endpoint, customerCollection, response, conte
 
     if (customer[0].currStep == Steps.SUMMARY_STEP) {
         msg = message.createAndSend(endpoint, payload,
-              "Your order of a " + customer[0].typePizza + " pizza with " + customer[0].toppings + " will be delivered to " + customer[0].address, context);
+              "Your order of a " + customer[0].sizePizza + " pizza with " + customer[0].toppings + " will be delivered to " + customer[0].address, context);
         response.sendStatus(200);
 
-        await customerCollection.updateMany({ userId: payload.user }, { $unset: { typePizza: "", toppings: "", address: "" } });
+        await customerCollection.updateMany({ userId: payload.user }, { $unset: { sizePizza: "", toppings: "", address: "" } });
         await customerCollection.updateOne({ userId: payload.user }, { $set: { currStep: Steps.INIT_STEP } });
     }
 }

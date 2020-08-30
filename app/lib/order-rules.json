@@ -1,0 +1,46 @@
+[{
+    "dataElement": "init",
+    "dataType": null,
+    "stepName": "initStep",
+    "required": true,
+    "multiValue": false,
+    "question": "What is your order?",
+    "multiValueQuestion": "",
+    "firstTimeQuestion": ""
+}, {
+    "dataElement": "size",
+    "dataType": "string",
+    "stepName": "sizeStep",
+    "required": true,
+    "multiValue": false,
+    "question": "What size pizza would you like? (Small, Medium, Large, Extra Large)",
+    "multiValueQuestion": "",
+    "firstTimeQuestion": ""
+}, {
+    "dataElement": "toppings",
+    "dataType": "string[]",
+    "stepName": "toppingsStep",
+    "required": false,
+    "multiValue": true,
+    "question": "Would you like any more toppings? (Maximum 3)",
+    "multiValueQuestion": "What topping would you like?",
+    "firstTimeQuestion": "Would you like any toppings?"
+}, {
+    "dataElement": "address",
+    "dataType": "string",
+    "stepName": "addressStep",
+    "required": true,
+    "multiValue": false,
+    "question": "What is your address?",
+    "multiValueQuestion": "",
+    "firstTimeQuestion": ""
+}, {
+    "dataElement": "summary",
+    "dataType": null,
+    "stepName": "summaryStep",
+    "required": true,
+    "multiValue": false,
+    "question": "",
+    "multiValueQuestion": "",
+    "firstTimeQuestion": ""
+}]
