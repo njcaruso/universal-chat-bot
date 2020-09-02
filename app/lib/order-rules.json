@@ -20,11 +20,18 @@
     "dataElement": "toppings",
     "dataType": "string[]",
     "stepName": "toppingsStep",
-    "required": false,
+    "required": true,
+    "multiValue": false,
+    "question": "What toppings would you like? (Maximum 3)",
+    "multiValueQuestion": "Would you like any more toppings?"
+}, {
+    "dataElement": "repeatToppings",
+    "dataType": null,
+    "stepName": "repeatToppingsStep",
+    "required": true,
     "multiValue": true,
-    "question": "Would you like any more toppings? (Maximum 3)",
-    "multiValueQuestion": "What topping would you like?",
-    "firstTimeQuestion": "Would you like any toppings?"
+    "question": "Would you like any more toppings?",
+    "multiValueQuestion": "Would you like any more toppings?"
 }, {
     "dataElement": "address",
     "dataType": "string",
